@@ -1,7 +1,8 @@
 .htaccess
 .vscode/
 changes.txt
-index.php
 application/config/config.php
+/index.php
 uploads/
 assets/images/logo*
+.idea

@@ -9,6 +9,7 @@ Class Chat extends Auth_Controller  {
 		$this->load->library('session');  
 		$this->load->helper(array('form', 'url'));  
 		$this->privs = $this->get_privs();
+		
 	} 
 	
 	/**
@@ -83,17 +84,17 @@ Class Chat extends Auth_Controller  {
 	} 
 	
 	public function do_upload_attachment(){
+		
 		$config = array(
 			'upload_path' => "./uploads/chat_attachment/",
-			'allowed_types' => "gif|jpg|png|jpeg|txt|xls|xlsx|doc|docx|pdf",
+			'allowed_types' => "gif|jpg|png|jpeg|txt|xls|xlsx|doc|docx|pdf|mp4",
 			'overwrite' => TRUE,
-			'max_size' => "5048", // Can be set to particular file size , here it is 5 MB(5048 Kb)
+			'max_size' => "20480", // Can be set to particular file size , 10mbs
 			'max_height' => "3000",
 			'max_width' => "3000",  
 		);
 		
 		$this->load->library('upload', $config);
- 
 		
 		if($this->upload->do_upload())
 		{
@@ -105,9 +106,9 @@ Class Chat extends Auth_Controller  {
 			
 		}else{
 			
-			$data['error'] =  $this->upload->display_errors(); 
-			//var_dump($data['error']);
-			//exit();
+			$data['error'] =  $this->upload->display_errors();  
+			//var_dump($data);
+			// exit();
 			
 		}
 		

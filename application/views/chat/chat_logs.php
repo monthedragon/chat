@@ -9,7 +9,7 @@ $img_ext_array  = array('jpg','png','gif');
 
 //source of svg: https://www.flaticon.com/packs/file-types
 //svg file should have equivalent on this folder: /uploads/icon
-$svg_arrays = array('xlsx','xls','pdf','doc');
+$svg_arrays = array('xlsx','xls','pdf','doc','mp4');
 ?>
 <table id='tbl-chat' width=100% >
 <tr>
