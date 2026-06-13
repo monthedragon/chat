@@ -1,0 +1,423 @@
+/* ── chat.css ───────────────────────────────────────────────────── */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ── Main layout ────────────────────────────────────────────────── */
+#chat-list {
+    min-height: 500px;
+    width: 22% !important;
+    border-right: 1px solid #e0e0e0 !important;
+    float: left;
+    background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+}
+
+#user-list {
+    height: auto !important;
+    display: block;
+    flex: 1;
+}
+
+/* ── Sidebar inputs ─────────────────────────────────────────────── */
+#frm-user-list input[type=input],
+#frm-user-list input[type=text] {
+    width: 90% !important;
+    margin-bottom: 8px !important;
+    padding: 7px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 13px;
+    background: #fff;
+    color: #333;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#btn-crate-gc {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 90% !important;
+    margin: 0 auto 8px !important;
+    padding: 7px 10px;
+    font-size: 13px;
+    background: #2979CC;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #fff;
+    font-weight: 500;
+    transition: background 0.15s;
+}
+
+#btn-crate-gc:hover { background: #1a5fa3; }
+
+#user_chat_search {
+    width: 90% !important;
+    margin: 0 auto 8px !important;
+    padding: 7px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 13px;
+    display: block;
+}
+
+#frm-user-list > div[style*="height:350px"] {
+    height: 340px !important;
+    max-height: 340px !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    padding: 4px 0;
+}
+
+/* ── User rows ──────────────────────────────────────────────────── */
+.div-user {
+    display: flex;
+    align-items: center;
+    padding: 7px 12px;
+    cursor: pointer;
+    transition: background 0.15s;
+    gap: 8px;
+}
+
+.div-user:hover { background: #efefef; }
+
+.div-user-chat {
+    display: inline-block;
+    height: auto !important;
+    width: auto !important;
+    flex: 1;
+    font-size: 13px;
+    color: #333;
+    margin-top: 0 !important;
+    padding: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.div-unread {
+    font-weight: 600;
+    color: #1a7a52 !important;
+}
+
+.div-unread::after {
+    content: '';
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    background: #1D9E75;
+    border-radius: 50%;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+/* ── Group chat sidebar ─────────────────────────────────────────── */
+#frm-user-list hr, #chat-list hr {
+    border: none;
+    border-top: 1px solid #e5e5e5;
+    margin: 6px 0;
+}
+
+.div-gc-chat {
+    display: flex !important;
+    align-items: center;
+    padding: 7px 12px;
+    font-size: 13px;
+    color: #333;
+    cursor: pointer;
+    width: 80% !important;
+    float: left;
+    gap: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.div-gc-chat:hover { background: #efefef; }
+.div-gc-chat.div-unread { font-weight: 600; color: #1a7a52; }
+
+.e-link {
+    width: 15% !important;
+    float: right !important;
+    padding: 7px 4px;
+    font-size: 11px;
+    color: #888;
+    cursor: pointer;
+    text-align: right;
+}
+
+.e-link:hover { color: #333; }
+
+.gc-section-label {
+    font-size: 11px;
+    color: #999;
+    padding: 6px 12px 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.gc-icon { font-size: 14px; margin-right: 4px; }
+
+/* ── Chat box ───────────────────────────────────────────────────── */
+#div-chat-log {
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column;
+    padding-left: 12px !important;
+}
+
+#div-chat-log h2 {
+    font-size: 15px;
+    font-weight: 500;
+    color: #222;
+    padding: 10px 4px;
+    border-bottom: 1px solid #e8e8e8;
+    margin: 0 0 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.export-btn {
+    padding: 4px 10px !important;
+    font-size: 12px !important;
+    border: 1px solid #ccc !important;
+    border-radius: 5px !important;
+    background: #fff !important;
+    color: #555 !important;
+    cursor: pointer !important;
+}
+
+/* ── Message log ────────────────────────────────────────────────── */
+#msg-chat-log {
+    flex: 1;
+    display: block;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 8px 4px;
+}
+
+/* ── Table layout ───────────────────────────────────────────────── */
+#tbl-chat {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+#tbl-chat td { padding: 0; }
+
+.avatar-cell {
+    width: 13%;
+    padding-top: 6px !important;
+    vertical-align: top;
+}
+
+.avatar-cell-other { text-align: right; padding-right: 8px !important; }
+
+.bubble-cell {
+    width: 74%;
+    vertical-align: top;
+    padding-bottom: 10px !important;
+}
+
+.bubble-cell-own { text-align: right; }
+
+/* ── Avatars ────────────────────────────────────────────────────── */
+.user-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.avatar-spacer {
+    display: inline-block;
+    width: 32px;
+    height: 1px;
+}
+
+.av-green  { background: #E1F5EE; color: #0F6E56; }
+.av-purple { background: #EEEDFE; color: #3C3489; }
+.av-coral  { background: #FAECE7; color: #993C1D; }
+.av-blue   { background: #E6F1FB; color: #185FA5; }
+.av-amber  { background: #FAEEDA; color: #854F0B; }
+.av-teal   { background: #d0f0e8; color: #085041; }
+
+/* ── Sender name ────────────────────────────────────────────────── */
+.msg-sender-name {
+    font-size: 11px;
+    color: #999;
+    margin-bottom: 3px;
+    padding: 0 2px;
+    text-align: left;
+}
+
+.msg-sender-own {
+    text-align: right;
+}
+
+/* ── Chat bubbles ───────────────────────────────────────────────── */
+.own_msg,
+.other_msg {
+    display: inline-block;
+    min-width: 30%;        /* ← prevents tiny bubbles on short msgs */
+    max-width: 75%;
+    padding: 8px 14px;
+    border-radius: 14px;
+    font-size: 13px;
+    line-height: 1.55;
+    word-break: break-word;
+    vertical-align: top;
+}
+
+/* own — green, right aligned */
+.own_msg {
+    background: #1D9E75;
+    color: #fff;
+    border-bottom-right-radius: 3px;
+    text-align: left;       /* text inside still LTR */
+}
+
+/* other — gray, left aligned */
+.other_msg {
+    background: #f0f0f0;
+    color: #222;
+    border-bottom-left-radius: 3px;
+    text-align: left;
+}
+
+/* ── Datetime — BELOW bubble ────────────────────────────────────── */
+.own_msg_datetime,
+.other_msg_datetime {
+    display: block;
+    font-size: 11px;
+    color: #aaa;
+    margin-top: 3px;
+    padding: 0 2px;
+    white-space: nowrap;
+    text-align: right;
+}
+
+.other_msg_datetime {
+    text-align: left;
+}
+
+/* ── Status trigger link ────────────────────────────────────────── */
+.spn_chat_status {
+    font-size: 11px;
+    color: #888;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.spn_chat_status:hover { color: #333; }
+
+/* ── Completed badge (inside bubble, above message text) ────────── */
+.chat_log_completed {
+    display: block;
+    font-size: 10px;
+    padding: 1px 7px;
+    border-radius: 10px 0px 10px 0px;
+    margin-bottom: 4px;
+    margin-top: -7px;
+    margin-left:-13px;
+    font-weight: 500;
+    max-width: 70px
+}
+
+.status_yellow { background: #fff8e1; color: #b45309; }
+.status_red    { background: #fef2f2; color: #991b1b; }
+
+/* ── Compose area ───────────────────────────────────────────────── */
+#frm-chat {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px 4px 4px;
+    border-top: 1px solid #e8e8e8;
+    margin-top: 8px;
+}
+
+#txt-message {
+    width: 100% !important;
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: inherit;
+    resize: none;
+    color: #333;
+    background: #fff;
+}
+
+#txt-message:focus {
+    outline: none;
+    border-color: #1D9E75;
+    box-shadow: 0 0 0 2px rgba(29,158,117,0.15);
+}
+
+#userfile { font-size: 12px; color: #666; }
+
+.send-btn,
+#frm-chat input[type=submit] {
+    align-self: flex-end;
+    padding: 7px 20px !important;
+    background: #1D9E75 !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 6px !important;
+    font-size: 13px !important;
+    cursor: pointer !important;
+}
+
+.send-btn:hover,
+#frm-chat input[type=submit]:hover { background: #178a65 !important; }
+
+/* ── Utility ────────────────────────────────────────────────────── */
+.cursor-pointer { cursor: pointer; }
+#tbl-chat img { border-radius: 4px; }
+
+/* ── Message wrapper — controls bubble + meta alignment ─────────── */
+.msg-wrap {
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+}
+
+/* own messages — everything aligns right */
+.msg-wrap-own {
+    align-items: flex-end;
+}
+
+/* other messages — everything aligns left */
+.msg-wrap-other {
+    align-items: flex-start;
+}
+
+/* ── Override: datetime must NOT use position that escapes flow ──── */
+.own_msg_datetime,
+.other_msg_datetime {
+    position: static !important;
+    float: none !important;
+    display: block !important;
+    font-size: 11px;
+    color: #aaa;
+    margin-top: 3px;
+    padding: 0 2px;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.own_msg_datetime  { text-align: right; }
+.other_msg_datetime { text-align: left; }

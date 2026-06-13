@@ -29,7 +29,8 @@ Class Main extends Auth_Controller  {
 		$this->load->helper('form');
 		
 		$this->set_header_data(PROJECT_NAME);
-			
+
+        $dataIndex['userId'] = $this->session->userdata('username');
 		$dataIndex['session'] = $this->session->all_userdata();
 		$dataIndex['privs'] = $this->data;
 		$this->load->view('main/index',$dataIndex);

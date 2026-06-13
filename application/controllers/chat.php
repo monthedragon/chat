@@ -37,6 +37,8 @@ Class Chat extends Auth_Controller  {
 	}
 	
 	public function chat_box($participant_id){
+        $data['chat_type'] = 'SOLO';
+        $data['userId'] = $this->session->userdata('username');
 		$data['user_type'] = $this->session->userdata('user_type');
 		$participant_info = $this->get_user_grp_by_id($participant_id);
 		$data['participant_name'] =  $participant_info[$participant_id];
@@ -141,6 +143,8 @@ Class Chat extends Auth_Controller  {
 	* GROUP CHAT starts here
 	**/
 	public function gc_chat_box($chat_id){
+        $data['chat_type'] = 'GROUP';
+        $data['userId'] = $this->session->userdata('username');
 		$data['user_type'] = $this->session->userdata('user_type');
 		$gc_info = $this->chat_model->getChatInfo($chat_id);
 		$data['participant_name'] =  $gc_info[0]['chat_name'];
