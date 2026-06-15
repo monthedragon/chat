@@ -39,7 +39,7 @@
 				type:'POST',
 				data:$(this).serialize(),
 				success:function(data){ 
-					console.log(data);
+					//console.log(data);
 					$("#div-time-tracker").html(data);
 				}
 			})

@@ -10,7 +10,7 @@
         substr($nameParts[0], 0, 1) .
         substr((isset($nameParts[$endKey ]) ? $nameParts[$endKey ] : ''), 0, 1)
     );
-    $av_colors = ['av-green','av-purple','av-coral','av-blue','av-amber'];
+    $av_colors = ['av-green','av-purple','av-coral','av-blue','av-amber','av-teal'];
     $av_class  = $av_colors[abs(crc32($target_user_id)) % count($av_colors)];
     echo "<span class='user-avatar {$av_class}' style='width:36px;height:36px;font-size:13px;'>{$initials}</span>";
     ?>
@@ -30,11 +30,11 @@
     ?>
 </div>
 
-<div id='msg-chat-log' style='flex:1;overflow:auto;padding:8px 4px;'></div>
+<div id='msg-chat-log' style='flex:1;overflow:auto;padding:8px 4px;border-bottom:1px solid #e8e8e8;'></div>
 
 <div id='prev-chat-log-len' style='display:none'></div>
 
-<div style='border-top:1px solid #e8e8e8;padding:10px 4px 4px;margin-top:4px;'>
+<div style=''>
     <form id='frm-chat' name='frm-chat' method='post'>
         <textarea
             name='message'
@@ -77,7 +77,7 @@
             do_scroll_down = false;
         }
 
-        console.log('Loading from:'  + url_chat_thread);
+//        console.log('Loading from:'  + url_chat_thread);
         $.ajax({
             url: url_chat_thread + '/' + param_chat_log_per_row,
             success: function(data) {
@@ -111,6 +111,7 @@
     }
 
     $(function() {
+        $('#txt-message').focus();
 
         //initialize chat log
         load_chat_log();

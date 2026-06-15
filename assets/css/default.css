@@ -183,7 +183,7 @@ hr.separator{background-color:#efefef;}
 #whole{min-height:90%;position:relative;}
 div.content{height:90%;text-align:left;padding:0px;vertical-align:text-top;}
 #footer{font-size:10px;height:0px;color:#000;position:absolute;width:100%; background:#efefef 0 0 repeat-x;bottom:0;margin:0}
-td.pagefooter {font-size:10px;color:#c0c0c0;border-top:1px solid #efefef;height:50px;}
+td.pagefooter {font-size:10px;color:#c0c0c0;border-top:1px solid #efefef;height:0px;}
 
 
 
@@ -1336,7 +1336,7 @@ div.div-top-userinfo{
     width:300px;
     text-align:center;
     float:right;
-    margin-top:55px;
+    margin-top:25px;
     margin-bottom:-20px;
     color:orange;
     font-size:10px;

@@ -34,7 +34,10 @@ class Chat_model extends CI_Model {
 		$this->db->select('*')->from('users')->where('is_active',1);
 
 		$result = $this->db->order_by('user_type,is_active,firstname,lastname')->get()->result_array();
-		
+
+//        echo $this->db->last_query();
+//        echo '<hr>';
+
 		$user_list = array();
 		foreach($result as $details){
 			$user_list[$details['user_name']] = $details;
@@ -209,6 +212,8 @@ class Chat_model extends CI_Model {
 											->get()->result_array();
 						
 		$unread = array();
+
+//        echo $this->db->last_query();
 		
 		//In later once GROUP CHAT requested better appened the chat_id from the LIST and check it using chat_id if the thread is unread or not
 		foreach($result as $details){
@@ -218,43 +223,79 @@ class Chat_model extends CI_Model {
 		return $unread;
 		
 	}
+
+    public function getLastMessageTimes(){
+        $username = $this->session->userdata('username');
+
+        $result = $this->db->select('chat_users.user_id AS other_user_id, latest_msg.last_message_at')
+            ->from('chat_users')
+            ->join('chat_users AS logged_user', "logged_user.chat_id = chat_users.chat_id AND logged_user.user_id = '{$username}'")
+            ->join('chat', "chat.id = chat_users.chat_id AND chat.chat_type = 'solo'")
+            ->join('(SELECT chat_id, MAX(date_entered) as last_message_at FROM chat_logs GROUP BY chat_id) AS latest_msg', 'latest_msg.chat_id = chat.id', 'left')
+            ->where('chat_users.user_id !=', $username)
+            ->get()->result_array();
+
+//        echo $this->db->last_query();
+//        echo '<hr>';
+
+        $last_message_times = array();
+        foreach($result as $details){
+            $last_message_times[$details['other_user_id']] = $details['last_message_at'];
+        }
+
+        return $last_message_times;
+    }
 	
 	/**
 	* Re-arrange the list of the user to be displayed in the chat list
 	* Set from above those user who has unread messages
 	**/
-	public function re_arrange_ulist($user_list,$unread_user_chat){
-		$final_list = array();
-		foreach($unread_user_chat as $key=>$details){
-				if(!isset($user_list[$key])) continue;
-				
-				$final_list[$key] = $user_list[$key];
-				unset($user_list[$key]);
-		}
-		
-		if($user_list){
-			$final_list += $user_list;
-		}
-		
-		return $final_list;
-	}
+    public function re_arrange_ulist($user_list, $unread_user_chat, $last_message_times = array()){
 
-	public function getInvolvedGC(){
-		
-		$username = $this->session->userdata('username');
-		
-		$result = $this->db->select('chat.id AS chat_id, chat_name')
-				->from('chat')
-				->join('chat_users',"chat_users.chat_id = chat.id ")
-				->join('chat_users AS logged_user',"logged_user.chat_id = chat_users.chat_id AND logged_user.user_id = '{$username}'")
-				->where('chat_users.user_id !=', $username)
-				->where('chat_type','group')
-				->group_by('chat.id')
-				->order_by('chat.chat_name')
-				->get()->result_array();
-		
-		return $result;
-	}
+        $unread_group = array();
+        $recent_group = array();
+        $rest_group   = array();
+
+        foreach($user_list as $key => $details){
+            if(isset($unread_user_chat[$key])){
+                $unread_group[$key] = isset($last_message_times[$key]) ? $last_message_times[$key] : '0000-00-00';
+            } elseif(isset($last_message_times[$key])){
+                $recent_group[$key] = $last_message_times[$key];
+            } else {
+                $rest_group[$key] = true;
+            }
+        }
+
+        arsort($unread_group);
+        arsort($recent_group);
+
+        $final_list = array();
+        foreach($unread_group as $key => $time) $final_list[$key] = $user_list[$key];
+        foreach($recent_group as $key => $time) $final_list[$key] = $user_list[$key];
+        foreach($rest_group   as $key => $val)  $final_list[$key] = $user_list[$key];
+
+        return $final_list;
+    }
+
+    public function getInvolvedGC(){
+
+        $username = $this->session->userdata('username');
+
+        $result = $this->db->select('chat.id AS chat_id, chat_name, logged_user.is_read, latest_msg.last_message_at')
+            ->from('chat')
+            ->join('chat_users',"chat_users.chat_id = chat.id ")
+            ->join('chat_users AS logged_user',"logged_user.chat_id = chat_users.chat_id AND logged_user.user_id = '{$username}'")
+            ->join('(SELECT chat_id, MAX(date_entered) as last_message_at FROM chat_logs GROUP BY chat_id) AS latest_msg', 'latest_msg.chat_id = chat.id', 'left')
+            ->where('chat_users.user_id !=', $username)
+            ->where('chat_type','group')
+            ->group_by('chat.id')
+            ->order_by('logged_user.is_read', 'asc')
+            ->order_by('latest_msg.last_message_at', 'desc')
+            ->get()->result_array();
+
+//        echo $this->db->last_query();
+        return $result;
+    }
 	
 	/**
 	* Start of Group Chat
@@ -279,7 +320,9 @@ class Chat_model extends CI_Model {
 											->where('chat_users.user_id !=', $username)
 											->order_by('chat_users.user_id')
 											->get()->result_array();
-						
+
+//        echo '<hr>';
+//        echo $this->db->last_query();
 		$unread = array();
 		
 		//In later once GROUP CHAT requested better appened the chat_id from the LIST and check it using chat_id if the thread is unread or not

@@ -16,18 +16,28 @@
     const ws = new WebSocket('ws://localhost:8080');
 
 	function load_user_list() {
-        console.log('laoding user list...')
+        var scrollTopUser = $('#body-users').scrollTop();
+        var scrollTopGC = $('#body-gc').scrollTop();
+
+        //console.log('laoding user list...')
 		$.ajax({
 			url: '<?= base_url() ?>chat/user_list',
 			success: function(data) {
 
-				dataLen = data.length;
-				userListLen = $('#prev-user-list-len').html();
+                // Remove the dataLen logic.
+                // It was originally used during the polling process to compare the current chat length with the previous chat length.
+                // If a difference was detected, the user list would be reloaded.
+//				dataLen = data.length;
+//				userListLen = $('#prev-user-list-len').html();
+//				if (dataLen != userListLen) {
 
-				if (dataLen != userListLen) {
-					$('#user-list').html(data);
-					$('#prev-user-list-len').html(dataLen);
-				}
+                $('#user-list').html(data);
+//                $('#prev-user-list-len').html(dataLen);
+                $('#body-users').scrollTop(scrollTopUser);
+                $('#body-gc').scrollTop(scrollTopGC);
+
+//				}
+
 			}
 		})
 
@@ -56,8 +66,8 @@
             const msg = JSON.parse(event.data);
             if (msg.type === 'new_message') {
 //                appendMessage(msg.data);   // ← we need to create this
-                console.log('appendMessage: ');
-                console.log(msg.data);
+//                console.log('appendMessage: ');
+//                console.log(msg.data);
                 load_chat_log();
             }
 
@@ -68,7 +78,7 @@
 
         ws.onclose = () => {
             wsReady = false;
-            console.log('WS disconnected, reconnecting...');
+//            console.log('WS disconnected, reconnecting...');
             setTimeout(() => location.reload(), 3000);
         };
 

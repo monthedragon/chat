@@ -19,16 +19,15 @@ Class Chat extends Auth_Controller  {
 		$this->load->helper('form'); 
 		$data['session'] = $this->session->all_userdata();
 		$data['privs'] = $this->privs;
+
+        $user_list           = $this->chat_model->getChatUserList();
+        $unread_user_chat    = $this->chat_model->getUnReadChat();
+        $last_message_times  = $this->chat_model->getLastMessageTimes();  // ← new
+        $user_list           = $this->chat_model->re_arrange_ulist($user_list, $unread_user_chat, $last_message_times);
 		
-		$user_list = $this->chat_model->getChatUserList();
-		$unread_user_chat = $this->chat_model->getUnReadChat();
-		$user_list = $this->chat_model->re_arrange_ulist($user_list,$unread_user_chat);
-		
-		if(1){ //trial remove once done
-			$data['gc_list'] = $this->chat_model->getInvolvedGC();
-			$data['unread_group_chat'] = $this->chat_model->getUnreadGroupChat();
-		}
-		
+        $data['gc_list'] = $this->chat_model->getInvolvedGC();
+        $data['unread_group_chat'] = $this->chat_model->getUnreadGroupChat();
+
 		$data['users'] = $user_list;
 		$data['unread_user_chat'] = $unread_user_chat;
 		$data['user_type'] = $this->session->userdata('user_type');
