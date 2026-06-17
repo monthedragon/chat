@@ -603,9 +603,13 @@ div.message_note {
 div {margin-bottom:5px;}
 
 div.toplink {
-	background: url('../images/tp_bg_header.gif') right top no-repeat transparent;
+	/*background: url('../images/tp_bg_header.gif') right top no-repeat transparent;*/
 	height: 50px;
 	border-bottom:5px solid #e6ecec;
+}
+
+ul.dropdown ul{
+    left: -40px !important;
 }
 
 div.toplink  span.span-tp-logo{

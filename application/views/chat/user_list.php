@@ -36,14 +36,7 @@ foreach ($users as $details) {
     $av_colors = ['av-green','av-purple','av-coral','av-blue','av-amber','av-teal'];
     $av_class  = $av_colors[abs(crc32($details['user_name'])) % count($av_colors)];
 
-    $checkbox = ($user_type == ADMIN_CODE)
-        ? "<input type='checkbox' value='{$details['user_name']}' class='cursor-pointer' name='participants[]'>"
-        : '';
-
     echo "<div class='div-user {$fullNameCls}' user_id='{$details['user_name']}' data-name='" . strtolower($fullName) . "'>";
-    if($checkbox){
-        echo "<span class='checkbox-zone'>{$checkbox}</span>";
-    }
     echo "<span class='user-avatar {$av_class}'>{$initials}</span>";
     echo "<span class='div-user-chat cursor-pointer {$unread_cls}'>{$fullName}</span>";
     echo "</div>";

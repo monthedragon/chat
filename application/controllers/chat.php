@@ -50,8 +50,9 @@ Class Chat extends Auth_Controller  {
 	public function chat_logs($chat_id,$limit='',$do_export=false,$participant_id=''){
 		$this->chat_model->chat_id = $chat_id;
 		$data['logs'] =  $this->chat_model->get_chat_logs($limit);	
-		
-		$data['current_user'] = $this->session->userdata('username');
+
+        $current_user = $this->session->userdata('username');
+		$data['current_user'] = $current_user;
 		$data['user_type'] = $this->session->userdata('user_type');
 		$data['chat_id'] = $chat_id;
 		$data['privs'] = $this->privs;
@@ -62,8 +63,9 @@ Class Chat extends Auth_Controller  {
 		}
 		
 		$data['do_export'] = $do_export;
-		
-		$this->load->view('chat/chat_logs',$data);	
+        $data['reactions'] = $this->chat_model->getReactionsForChat($chat_id, $current_user);
+
+        $this->load->view('chat/chat_logs',$data);
 	}
 	 
 	public function save($chat_id){
@@ -178,5 +180,12 @@ Class Chat extends Auth_Controller  {
 	public function updateGC($chat_id){
 		$this->chat_model->updateGC($chat_id);
 	}
+
+    public function toggle_reaction($chat_log_id){
+        $user_id = $this->session->userdata('username');
+        $result  = $this->chat_model->toggleReaction($chat_log_id, $user_id);
+        echo json_encode($result);
+    }
+
 }
 ?>

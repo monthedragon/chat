@@ -464,4 +464,68 @@ class Chat_model extends CI_Model {
 				->delete('chat_users');
 		$this->createGCChatUsers();
 	}
+
+    // Toggle a reaction — if user already reacted, remove it; otherwise add it.
+    // Returns ['action' => 'added'|'removed', 'chat_log_id' => ..., 'count' => ...]
+    public function toggleReaction($chat_log_id, $user_id){
+
+        $existing = $this->db->select('id')
+            ->from('chat_reactions')
+            ->where('chat_log_id', $chat_log_id)
+            ->where('user_id', $user_id)
+            ->get()->row_array();
+
+        if ($existing) {
+            $this->db->where('id', $existing['id'])->delete('chat_reactions');
+            $action = 'removed';
+        } else {
+            $this->db->insert('chat_reactions', [
+                'chat_log_id' => $chat_log_id,
+                'user_id'     => $user_id,
+                'created_at'  => date('Y-m-d H:i:s')
+            ]);
+            $action = 'added';
+        }
+
+        $count = $this->db->where('chat_log_id', $chat_log_id)
+            ->count_all_results('chat_reactions');
+
+        return ['action' => $action, 'chat_log_id' => $chat_log_id, 'count' => $count];
+    }
+
+    // Get reaction counts + reactor names for ALL messages in a chat thread.
+    // Returns: [ chat_log_id => ['count' => N, 'names' => ['John Doe', 'Jane Cruz', ...], 'reacted_by_me' => bool] ]
+    public function getReactionsForChat($chat_id, $current_user){
+
+        $result = $this->db->select("cr.chat_log_id, cr.user_id, u.firstname, u.lastname")
+            ->from('chat_reactions cr')
+            ->join('chat_logs cl', 'cl.id = cr.chat_log_id')
+            ->join('users u', 'u.user_name = cr.user_id')
+            ->where('cl.chat_id', $chat_id)
+            ->order_by('cr.created_at', 'asc')
+            ->get()->result_array();
+
+        $reactions = [];
+
+        foreach ($result as $row) {
+            $logId = $row['chat_log_id'];
+
+            if (!isset($reactions[$logId])) {
+                $reactions[$logId] = [
+                    'count'         => 0,
+                    'names'         => [],
+                    'reacted_by_me' => false
+                ];
+            }
+
+            $reactions[$logId]['count']++;
+            $reactions[$logId]['names'][] = $row['firstname'] . ' ' . $row['lastname'];
+
+            if ($row['user_id'] == $current_user) {
+                $reactions[$logId]['reacted_by_me'] = true;
+            }
+        }
+
+        return $reactions;
+    }
 }

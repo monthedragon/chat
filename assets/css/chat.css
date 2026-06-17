@@ -11,10 +11,10 @@
     background: #f8f9fa;
     display: flex;
     flex-direction: column;
-    height: 85vh;          /* ← fills full screen height */
-    position: sticky;       /* ← stays in place while right panel scrolls */
+    height: 85vh;
+    position: sticky;
     top: 0;
-    overflow: hidden;       /* ← children handle their own scroll */
+    overflow: hidden;
 }
 
 #user-list {
@@ -22,8 +22,8 @@
     display: flex;
     flex-direction: column;
     flex: 1;
-    overflow: hidden;       /* ← children scroll, not this */
-    min-height: 0;          /* ← critical for flex scroll to work */
+    overflow: hidden;
+    min-height: 0;
 }
 
 /* ── Sidebar inputs ─────────────────────────────────────────────── */
@@ -257,26 +257,22 @@
 /* ── Chat bubbles ───────────────────────────────────────────────── */
 .own_msg,
 .other_msg {
-    display: inline-block;
-    min-width: 30%;        /* ← prevents tiny bubbles on short msgs */
-    max-width: 75%;
+    position: relative;
+    display: block;
     padding: 8px 14px;
     border-radius: 14px;
     font-size: 13px;
     line-height: 1.55;
     word-break: break-word;
-    vertical-align: top;
 }
-
-/* own — green, right aligned */
 .own_msg {
     background: #1D9E75;
     color: #fff;
     border-bottom-right-radius: 3px;
-    text-align: left;       /* text inside still LTR */
+    text-align: left;
+    /*float:right;*/
 }
 
-/* other — gray, left aligned */
 .other_msg {
     background: #f0f0f0;
     color: #222;
@@ -287,18 +283,21 @@
 /* ── Datetime — BELOW bubble ────────────────────────────────────── */
 .own_msg_datetime,
 .other_msg_datetime {
-    display: block;
+    position: static !important;
+    float: none !important;
+    display: block !important;
     font-size: 11px;
     color: #aaa;
     margin-top: 3px;
     padding: 0 2px;
     white-space: nowrap;
-    text-align: right;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.other_msg_datetime {
-    text-align: left;
-}
+.own_msg_datetime  { text-align: right; }
+.other_msg_datetime { text-align: left; }
 
 /* ── Status trigger link ────────────────────────────────────────── */
 .spn_chat_status {
@@ -382,34 +381,13 @@
     max-width: 100%;
 }
 
-/* own messages — everything aligns right */
 .msg-wrap-own {
     align-items: flex-end;
 }
 
-/* other messages — everything aligns left */
 .msg-wrap-other {
     align-items: flex-start;
 }
-
-/* ── Override: datetime must NOT use position that escapes flow ──── */
-.own_msg_datetime,
-.other_msg_datetime {
-    position: static !important;
-    float: none !important;
-    display: block !important;
-    font-size: 11px;
-    color: #aaa;
-    margin-top: 3px;
-    padding: 0 2px;
-    white-space: nowrap;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.own_msg_datetime  { text-align: right; }
-.other_msg_datetime { text-align: left; }
 
 /* ── Sidebar scroll containers ──────────────────────────────────── */
 .sidebar-section {
@@ -454,7 +432,6 @@
     transform: rotate(-90deg);
 }
 
-/* override the old fixed-height div inside frm-user-list */
 #frm-user-list > div[style*="height:350px"] {
     height: auto !important;
     max-height: none !important;
@@ -462,7 +439,6 @@
     padding: 4px 0;
 }
 
-/* ── Make #user-list a flex column that fills sidebar ───────────── */
 #user-list {
     display: flex !important;
     flex-direction: column;
@@ -471,20 +447,17 @@
     overflow: hidden;
 }
 
-/* ── frm-user-list fills #user-list naturally ───────────────────── */
 #frm-user-list {
-    display: contents; /* ← acts invisible to flex, children become
-                           direct flex children of #user-list instead */
+    display: contents;
 }
 
-/* ── Each section takes proportional space and scrolls ──────────── */
 #section-form {
     flex: 1.2;
     min-height: 0;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    transition: flex 0.2s;   /* ← smooth resize when collapsing */
+    transition: flex 0.2s;
 }
 
 #section-users {
@@ -493,7 +466,7 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    transition: flex 0.2s;   /* ← smooth resize when collapsing */
+    transition: flex 0.2s;
 }
 
 #section-users.collapsed #body-users {
@@ -507,7 +480,7 @@
 #section-users.collapsed,
 #section-form.collapsed,
 #section-gc.collapsed{
-    flex: 0 0 auto;                 /* ← takes no space when collapsed */
+    flex: 0 0 auto;
 }
 
 #section-gc {
@@ -519,7 +492,6 @@
     transition: flex 0.2s;
 }
 
-/* ── The scrollable body inside each section ────────────────────── */
 #body-users,
 #body-gc{
     flex: 1;
@@ -531,7 +503,6 @@
 #body-create-gc{
     overflow-y: hidden;
 }
-
 
 /* ── Edit GC form ───────────────────────────────────────────────── */
 .gc-form-header {
@@ -618,16 +589,12 @@
     display: flex;
 }
 
-#body-create-gc input[name="gc_name"] {
-    /*margin-bottom: 2px !important;*/
-}
-
 .checkbox-zone {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 6px;       /* ← gives a bigger, safer click target */
-    cursor: default;    /* ← signals this zone behaves differently */
+    padding: 6px;
+    cursor: default;
 }
 
 #ws-status-banner {
@@ -649,7 +616,7 @@
     align-items: center;
     gap: 6px;
     padding: 8px 12px;
-    margin-left: 4px;      /* ← nudges it right to align with content below */
+    margin-left: 4px;
     font-size: 13px;
     color: #2979CC;
     font-weight: 500;
@@ -658,4 +625,120 @@
 
 .create-gc-link:hover {
     background: #f0f0f0;
+}
+
+/* ── Reactions ──────────────────────────────────────────────────── */
+.bubble-container {
+    position: relative;
+    display: inline-block;
+    max-width: 70%;
+    vertical-align: bottom;
+    /*width:60%;*/
+}
+
+.bubble-container .own_msg,
+.bubble-container .other_msg {
+    display: block;
+}
+
+.msg-reaction-trigger {
+    position: absolute;
+    bottom: -8px;
+    right: -4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #ddd;
+    font-size: 12px;
+    cursor: pointer;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.15s, transform 0.15s;
+    z-index: 5;
+}
+
+.bubble-container:hover .msg-reaction-trigger {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.msg-reaction-trigger.active {
+    border-color: #1D9E75;
+}
+
+.msg-wrap-own .msg-reaction-trigger {
+    right: auto;
+    left: -4px;
+}
+
+.msg-reaction-badge {
+    position: absolute;
+    bottom: -8px;
+    right: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 1px 7px;
+    font-size: 11px;
+    color: #555;
+    cursor: pointer;
+    z-index: 6;
+}
+
+.msg-wrap-own .msg-reaction-badge {
+    right: auto;
+    left: 4px;
+}
+
+.msg-reaction-badge.reaction-badge-active {
+    border-color: #1D9E75;
+    color: #1D9E75;
+}
+
+.reaction-badge-count {
+    font-size: 11px;
+}
+
+.bubble-container:has(.msg-reaction-badge) .msg-reaction-trigger {
+    display: none;
+}
+
+.reaction-names-popup {
+    display: none;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    padding: 6px 0;
+    min-width: 140px;
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 20;
+}
+
+.msg-reaction-badge:hover .reaction-names-popup,
+.reaction-names-popup:hover {
+    display: block;
+}
+
+.reaction-name-row {
+    font-size: 12px;
+    color: #333;
+    padding: 4px 12px;
+    white-space: nowrap;
+}
+
+.reaction-name-row:hover {
+    background: #f5f5f5;
 }
