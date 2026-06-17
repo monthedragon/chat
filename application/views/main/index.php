@@ -74,18 +74,43 @@
     }
 
     function load_user_list() {
-        var scrollTopUser = $('#body-users').scrollTop();
-        var scrollTopGC = $('#body-gc').scrollTop();
+        const scrollTopUser = $('#body-users').scrollTop();
+        const scrollTopGC    = $('#body-gc').scrollTop();
+
+        const usersCollapsed = $('#section-users').hasClass('collapsed');
+        const gcCollapsed     = $('#section-gc').hasClass('collapsed');
+
         $.ajax({
             url: '<?= base_url() ?>chat/user_list',
             success: function(data) {
                 $('#user-list').html(data);
+
+                // ── disable transitions on sections AND headers/arrows ──────
+                $('#section-users, #section-gc, .sidebar-section-header, .sidebar-toggle')
+                    .addClass('no-transition');
+
                 $('#body-users').scrollTop(scrollTopUser);
                 $('#body-gc').scrollTop(scrollTopGC);
 
-                if (!wsReady) showWsStatusBanner();
-            }
-        })
+                if (usersCollapsed) {
+                    $('#section-users').addClass('collapsed');
+                    $('.sidebar-section-header[data-target="body-users"]').addClass('collapsed');
+                    $('#body-users').hide();
+                }
+
+                if (gcCollapsed) {
+                    $('#section-gc').addClass('collapsed');
+                    $('.sidebar-section-header[data-target="body-gc"]').addClass('collapsed');
+                    $('#body-gc').hide();
+                }
+
+                requestAnimationFrame(() => {
+                    $('#section-users, #section-gc, .sidebar-section-header, .sidebar-toggle').removeClass('no-transition');
+                });
+
+        if (!wsReady) showWsStatusBanner();
+    }
+    })
     }
 
     $(function() {

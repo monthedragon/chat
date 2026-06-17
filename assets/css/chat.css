@@ -638,3 +638,8 @@
     text-align: center;
     border-bottom: 1px solid #f0e0b0;
 }
+
+.no-transition,
+.no-transition * {
+    transition: none !important;
+}
