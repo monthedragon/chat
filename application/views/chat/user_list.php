@@ -5,22 +5,9 @@
 // ── Users section ─────────────────────────────────────────────────
 echo "<form id='frm-user-list'>";
 if ($user_type == ADMIN_CODE) {
-    echo "<div class='sidebar-section collapsed' id='section-form'>";
-    echo "  <div class='sidebar-section-header' data-target='body-create-gc'>";
-    echo "      <span>Group Chat Form</span>";
-    echo "      <span class='sidebar-toggle'>&#9660;</span>";
-    echo "  </div>";
-    echo "<div class='sidebar-section-body' id='body-create-gc' style='display:none;'>";
-    echo "<input type='input' class='required' name='gc_name' placeholder='Group chat name...'>";
-
-    echo "<label class='gc-viewonly-label'>
-        <input type='checkbox' name='view_only'>
-        View only (Agent)
-      </label>";
-
-    echo "<input type='submit' value='Create Group chat' id='btn-crate-gc' class='button'><br>";
-    echo "</div>"; //end of body-create-gc
-    echo "</div>"; //end of section-form
+    echo "<div class='create-gc-link cursor-pointer' id='btn-open-create-gc'>";
+    echo "  <span class='gc-icon'>&#10133;</span> Create Group Chat";
+    echo "</div>";
 }
 
 
@@ -172,26 +159,6 @@ echo "</form>";
         $('.e-link').mouseover(function() { $(this).css('font-weight', 'bold'); });
         $('.e-link').mouseout(function()  { $(this).css('font-weight', 'normal'); });
 
-        $('#frm-user-list').submit(function(event) {
-            event.preventDefault();
-            if ($(this).valid()) {
-                if (!confirm('Create group chat "' + $("input[name=gc_name]").val() + '"?')) return false;
-                $.ajax({
-                    url: '<?= base_url() ?>chat/createGC',
-                    data: $(this).serialize(),
-                    type: 'POST',
-                    success: function(data) {
-                        if (data != '') {
-                            alert(data);
-                        } else {
-                            alert('Saved');
-                            location.reload(true);
-                        }
-                    }
-                });
-            }
-        });
-
         if ($('.div-unread').length > 0) {
             scrolltitle();
         } else {
@@ -223,7 +190,7 @@ echo "</form>";
         $('.e-link').unbind('click');
         $('.e-link').click(function() {
             var chat_id = $(this).attr('chat_id');
-            var url     = '<?= base_url() ?>chat/edit_gc/' + chat_id;
+            var url     = '<?= base_url() ?>chat/gc_form/' + chat_id;
             do_ajax(url, 'POST', '', 'div-chat-log');
         });
 

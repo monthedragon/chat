@@ -43,25 +43,6 @@
     margin-right: auto;
 }
 
-#btn-crate-gc {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    width: 90% !important;
-    margin: 0 auto 8px !important;
-    padding: 7px 10px;
-    font-size: 13px;
-    background: #2979CC;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    color: #fff;
-    font-weight: 500;
-    transition: background 0.15s;
-}
-
-#btn-crate-gc:hover { background: #1a5fa3; }
-
 #user_chat_search {
     width: 90% !important;
     margin: 2px auto 8px !important;

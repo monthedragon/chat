@@ -97,4 +97,9 @@
         var $checkbox = $(this).find('input[type=checkbox]');
         $checkbox.prop('checked', !$checkbox.prop('checked'));
     });
+
+    $(document).on('click', '#btn-open-create-gc', function() {
+        var url = '<?= base_url() ?>chat/gc_form';
+        do_ajax(url, 'POST', '', 'div-chat-log');
+    });
 </script>

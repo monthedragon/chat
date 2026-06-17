@@ -136,15 +136,15 @@ $svg_arrays = array('xlsx','xls','pdf','doc','mp4');
 <script>
 	$(function(){
 		var url_chat_thread = '<?=base_url()?>chat/chat_logs/<?=$chat_id?>';
-		
+
 		$('.spn_chat_status').click(function(){
-			var status = $(this).attr('status');	
+			var status = $(this).attr('status');
 			var chat_log_id = $(this).attr('chat_log_id');
-			
+
 			$.ajax({
 				url: '<?=base_url()?>chat/update_chat_status/<?=$chat_id?>/'+chat_log_id+'/'+status,
 				success:function(data){
-					
+
 					//reload the chat log
 					$.ajax({
 							url: url_chat_thread,
@@ -152,10 +152,10 @@ $svg_arrays = array('xlsx','xls','pdf','doc','mp4');
 								$('#msg-chat-log').html(data);
 							}
 						})
-						
+
 				}
 			})
-			
+
 		})
 	})
 </script>

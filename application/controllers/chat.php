@@ -153,27 +153,28 @@ Class Chat extends Auth_Controller  {
 		$data['chat_id'] = $chat_id;
 		$this->load->view('chat/chat_box',$data);
 	}
-	
-	public function createGC(){
-		$this->chat_model->createGC();
-	}
-	
-	public function edit_gc($chat_id){
-		
-		$data['chat_id'] = $chat_id;
-		$data['user_type'] = $this->session->userdata('user_type');
-		
-		$gc_info = $this->chat_model->getChatInfo($chat_id);
-		$data['gc_info'] = $gc_info[0];
-		
-		$data['participants'] = $this->chat_model->getGCParticipants($chat_id);
-		
-		$user_list = $this->chat_model->getChatUserList();
-		
-		$data['users'] = $user_list;
-		$this->load->view('chat/edit_gc',$data);
-	}
-	
+
+    public function gc_form($chat_id = null){
+        $data['is_edit'] = !empty($chat_id);
+        $data['users']   = $this->chat_model->getChatUserList();
+        $data['user_type'] = $this->session->userdata('user_type');
+
+        if ($data['is_edit']) {
+            $data['chat_id']      = $chat_id;
+            $gc_info = $this->chat_model->getChatInfo($chat_id);
+            $data['gc_info'] = $gc_info[0];
+            $data['participants'] = $this->chat_model->getGCParticipants($chat_id);
+        }
+
+        $user_list = $this->chat_model->getChatUserList();
+        $data['users'] = $user_list;
+
+        $this->load->view('chat/gc_form', $data);
+    }
+    public function saveGC(){
+        $this->chat_model->createGC();
+    }
+
 	public function updateGC($chat_id){
 		$this->chat_model->updateGC($chat_id);
 	}
