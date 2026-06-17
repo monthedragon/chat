@@ -1,99 +1,104 @@
 <link rel="stylesheet" href="<?= base_url() ?>assets/css/chat.css">
-
 <span style='display:none' id='interval_holder'>s</span>
-
 <div id='chat-list'>
     <div id='user-list' style='height:100%;display:block'></div>
 </div>
-
 <div style='height:600px;width:74%;float:left;padding-left:12px;'>
     <div id='div-chat-log' style='height:100%;display:flex;flex-direction:column;'></div>
     <div id='prev-user-list-len' style='display:none'></div>
 </div>
-
 <script>
+    let wsReady = false;
+    let ws = null;
+    let reconnectAttempt = 0;
 
-    const ws = new WebSocket('ws://localhost:8080');
-
-	function load_user_list() {
-        var scrollTopUser = $('#body-users').scrollTop();
-        var scrollTopGC = $('#body-gc').scrollTop();
-
-        //console.log('laoding user list...')
-		$.ajax({
-			url: '<?= base_url() ?>chat/user_list',
-			success: function(data) {
-
-                // Remove the dataLen logic.
-                // It was originally used during the polling process to compare the current chat length with the previous chat length.
-                // If a difference was detected, the user list would be reloaded.
-//				dataLen = data.length;
-//				userListLen = $('#prev-user-list-len').html();
-//				if (dataLen != userListLen) {
-
-                $('#user-list').html(data);
-//                $('#prev-user-list-len').html(dataLen);
-                $('#body-users').scrollTop(scrollTopUser);
-                $('#body-gc').scrollTop(scrollTopGC);
-
-//				}
-
-			}
-		})
-
-	}
-
-	$(function() {
-		var chat_refresh_time = '<?= CHAT_REFRESH_UNREAD_TIME ?>'
-		load_user_list();
-
-		//OFF THE AUTO LOAD FOR CHAT 2017-05-05
-		//setInterval(load_user_list, chat_refresh_time); //every 2 secs check the user list if for notification purposes
-
-        // ── WebSocket ─────────────────────────────────────────────
-        let wsReady = false;
+    function connectWS() {
+        ws = new WebSocket('ws://localhost:8080');
 
         ws.onopen = () => {
             wsReady = true;
+            reconnectAttempt = 0; // reset backoff on success
+            hideWsStatusBanner();
+
             ws.send(JSON.stringify({
                 type:   'chat_list',
-                userId: '<?=$userId?>',
-                testParam: 'test'
+                userId: '<?=$userId?>'
             }));
         };
 
         ws.onmessage = (event) => {
             const msg = JSON.parse(event.data);
             if (msg.type === 'new_message') {
-//                appendMessage(msg.data);   // ← we need to create this
-//                console.log('appendMessage: ');
-//                console.log(msg.data);
                 load_chat_log();
             }
-
             if (msg.type === 'unread_badge') {
                 load_user_list();
             }
         };
 
-        ws.onclose = () => {
+        ws.onerror = () => {
             wsReady = false;
-//            console.log('WS disconnected, reconnecting...');
-            setTimeout(() => location.reload(), 3000);
+            //console.log('WS unavailable - chat will work without real-time push.');
+            showWsStatusBanner();
         };
 
-    })
-
-
-    function switchRoom(chatId) { //on hold for now
-        ws.send(JSON.stringify({ type: 'switch_chat', chatId: chatId}));
+        ws.onclose = () => {
+            wsReady = false;
+            showWsStatusBanner();
+            scheduleReconnect();
+        };
     }
 
+    function scheduleReconnect() {
+        reconnectAttempt++;
+        // exponential backoff, capped at 30s - avoids hammering the server
+        var delay = Math.min(3000 * reconnectAttempt, 30000);
+        //console.log('Attempting WS reconnect in ' + (delay/1000) + 's...');
+        setTimeout(connectWS, delay);
+    }
+
+    function wsSend(payload) {
+        if (wsReady && ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify(payload));
+        }
+    }
+
+    function showWsStatusBanner() {
+        if ($('#ws-status-banner').length) return;
+        $('<div id="ws-status-banner">Live updates unavailable - reconnecting...</div>')
+            .prependTo('#chat-list');
+    }
+
+    function hideWsStatusBanner() {
+        $('#ws-status-banner').remove();
+    }
+
+    function load_user_list() {
+        var scrollTopUser = $('#body-users').scrollTop();
+        var scrollTopGC = $('#body-gc').scrollTop();
+        $.ajax({
+            url: '<?= base_url() ?>chat/user_list',
+            success: function(data) {
+                $('#user-list').html(data);
+                $('#body-users').scrollTop(scrollTopUser);
+                $('#body-gc').scrollTop(scrollTopGC);
+
+                if (!wsReady) showWsStatusBanner();
+            }
+        })
+    }
+
+    $(function() {
+        load_user_list();
+        connectWS(); // ← initial connection
+    })
+
+    function switchRoom(chatId) { //on hold for now
+        wsSend({ type: 'switch_chat', chatId: chatId});
+    }
 
     $(document).on('click', '.gc-participant-list .div-user', function(e) {
-        // if the actual checkbox was clicked, let it handle itself naturally
         if ($(e.target).is('input[type=checkbox]')) return;
-
         var $checkbox = $(this).find('input[type=checkbox]');
         $checkbox.prop('checked', !$checkbox.prop('checked'));
     });

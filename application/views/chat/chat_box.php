@@ -68,11 +68,11 @@ if(($user_type == ADMIN_CODE || $chat_type == 'SOLO') ||
     function load_chat_log(param_chat_log_per_row = '') {
 
         //webSocket
-        ws.send(JSON.stringify({
+        wsSend({
             type:   'chat_box',
             userId: '<?=$userId?>',
             chatId: chat_id
-        }));
+        });
 
         let do_scroll_down = true;
         if (param_chat_log_per_row == '') {

@@ -630,3 +630,11 @@
     cursor: default;    /* ← signals this zone behaves differently */
 }
 
+#ws-status-banner {
+    background: #fff8e1;
+    color: #854F0B;
+    font-size: 11px;
+    padding: 6px 10px;
+    text-align: center;
+    border-bottom: 1px solid #f0e0b0;
+}
