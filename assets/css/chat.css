@@ -643,3 +643,19 @@
 .no-transition * {
     transition: none !important;
 }
+
+.create-gc-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    margin-left: 4px;      /* ← nudges it right to align with content below */
+    font-size: 13px;
+    color: #2979CC;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.create-gc-link:hover {
+    background: #f0f0f0;
+}
