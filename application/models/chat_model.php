@@ -346,12 +346,12 @@ class Chat_model extends CI_Model {
 			}else{
 			
 				$username = $this->session->userdata('username');
-			
-				
+
 				$data = array(
 							'created_by'=>$username,
 							'chat_type'=>'group',
-							'chat_name'=>$gc_name
+							'chat_name'=>$gc_name,
+                            'view_only' => isset($pdata['view_only']) ? 1 : 0
 						);
 						
 				$this->db->insert('chat',$data);
@@ -436,8 +436,10 @@ class Chat_model extends CI_Model {
 				$err = true;
 				$err_msg = 'Duplicate GC name';
 			}else{
-			
-				$this->db->update('chat',array('chat_name'=>$gc_name),array('id'=>$chat_id));
+
+                $viewOnly = isset($pdata['view_only']) ? 1 : 0;
+
+				$this->db->update('chat',array('chat_name'=>$gc_name, 'view_only' => $viewOnly), array('id'=>$chat_id));
 				$this->group_chat_id = $chat_id;
 				$this->updateGCParticipants();
 			}

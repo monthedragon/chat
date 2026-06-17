@@ -88,4 +88,13 @@
     function switchRoom(chatId) { //on hold for now
         ws.send(JSON.stringify({ type: 'switch_chat', chatId: chatId}));
     }
+
+
+    $(document).on('click', '.gc-participant-list .div-user', function(e) {
+        // if the actual checkbox was clicked, let it handle itself naturally
+        if ($(e.target).is('input[type=checkbox]')) return;
+
+        var $checkbox = $(this).find('input[type=checkbox]');
+        $checkbox.prop('checked', !$checkbox.prop('checked'));
+    });
 </script>

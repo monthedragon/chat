@@ -146,6 +146,7 @@ Class Chat extends Auth_Controller  {
         $data['userId'] = $this->session->userdata('username');
 		$data['user_type'] = $this->session->userdata('user_type');
 		$gc_info = $this->chat_model->getChatInfo($chat_id);
+        $data['gc_info'] = $gc_info[0];
 		$data['participant_name'] =  $gc_info[0]['chat_name'];
 		$data['target_user_id'] =  '';//not used just to remove warning msg
 		// echo '>>'.$chat_id;

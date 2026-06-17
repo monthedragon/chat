@@ -34,26 +34,32 @@
 
 <div id='prev-chat-log-len' style='display:none'></div>
 
-<div style=''>
-    <form id='frm-chat' name='frm-chat' method='post'>
-        <textarea
-            name='message'
-            id='txt-message'
-            rows='4'
-            style='width:100%;'
-            placeholder='Type a message... (Ctrl+Enter to send)'
-            ></textarea>
-        <div style='display:flex;align-items:center;gap:8px;margin-top:6px;'>
-            <?php
-            if ($user_type == ADMIN_CODE || $user_type == SUPPORT_CODE) {
-                echo "<input type='file' id='userfile' name='userfile' size='20' style='font-size:12px;color:#666;flex:1;' />";
-            }
-            ?>
-            <input type='submit' class='button send-btn' value='Send' style='margin-left:auto;'>
-        </div>
-    </form>
-</div>
-
+<?
+if(($user_type == ADMIN_CODE || $chat_type == 'SOLO') ||
+    ($chat_type == 'GROUP' && $user_type != ADMIN_CODE && !$gc_info['view_only']))
+    {
+?>
+    <!--    Conditional only for non-admin during GROUP chat -->
+    <div style=''>
+        <form id='frm-chat' name='frm-chat' method='post'>
+            <textarea
+                name='message'
+                id='txt-message'
+                rows='4'
+                style='width:100%;'
+                placeholder='Type a message... (Ctrl+Enter to send)'
+                ></textarea>
+            <div style='display:flex;align-items:center;gap:8px;margin-top:6px;'>
+                <?php
+                if ($user_type == ADMIN_CODE || $user_type == SUPPORT_CODE) {
+                    echo "<input type='file' id='userfile' name='userfile' size='20' style='font-size:12px;color:#666;flex:1;' />";
+                }
+                ?>
+                <input type='submit' class='button send-btn' value='Send' style='margin-left:auto;'>
+            </div>
+        </form>
+    </div>
+<?}?>
 <script>
     let chat_id = '<?= $chat_id ?>';
     let url_chat_thread = '<?= base_url() ?>chat/chat_logs/' + chat_id;

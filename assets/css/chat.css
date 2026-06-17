@@ -27,6 +27,7 @@
 }
 
 /* ── Sidebar inputs ─────────────────────────────────────────────── */
+
 #frm-user-list input[type=input],
 #frm-user-list input[type=text] {
     width: 90% !important;
@@ -47,7 +48,7 @@
     align-items: center;
     justify-content: center;
     width: 90% !important;
-    margin: 0 auto 0 !important;
+    margin: 0 auto 8px !important;
     padding: 7px 10px;
     font-size: 13px;
     background: #2979CC;
@@ -83,7 +84,7 @@
 .div-user {
     display: flex;
     align-items: center;
-    padding: 7px 12px;
+    padding: 2px 12px;
     cursor: pointer;
     transition: background 0.15s;
     gap: 8px;
@@ -131,7 +132,7 @@
 .div-gc-chat {
     display: flex !important;
     align-items: center;
-    padding: 7px 12px;
+    padding: 2px 12px;
     font-size: 13px;
     color: #333;
     cursor: pointer;
@@ -350,7 +351,7 @@
     flex-direction: column;
     gap: 8px;
     padding: 8px 4px 4px;
-    /*border-top: 1px solid #e8e8e8;*/
+    border-top: 1px solid #e8e8e8;
     margin-top: 8px;
 }
 
@@ -489,9 +490,15 @@
     overflow: hidden;
 }
 
+/* ── frm-user-list fills #user-list naturally ───────────────────── */
+#frm-user-list {
+    display: contents; /* ← acts invisible to flex, children become
+                           direct flex children of #user-list instead */
+}
+
 /* ── Each section takes proportional space and scrolls ──────────── */
-#section-users {
-    flex: 2;
+#section-form {
+    flex: 1.2;
     min-height: 0;
     display: flex;
     flex-direction: column;
@@ -499,7 +506,26 @@
     transition: flex 0.2s;   /* ← smooth resize when collapsing */
 }
 
-#section-users.collapsed {
+#section-users {
+    flex: 3;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: flex 0.2s;   /* ← smooth resize when collapsing */
+}
+
+#section-users.collapsed #body-users {
+    display: none;
+}
+
+#section-users.collapsed ~ #section-gc {
+    flex: 3.8;
+}
+
+#section-users.collapsed,
+#section-form.collapsed,
+#section-gc.collapsed{
     flex: 0 0 auto;                 /* ← takes no space when collapsed */
 }
 
@@ -514,11 +540,112 @@
 
 /* ── The scrollable body inside each section ────────────────────── */
 #body-users,
-#body-gc {
+#body-gc{
     flex: 1;
     min-height: 0;
     overflow-y: auto;
     overflow-x: hidden;
 }
 
+#body-create-gc{
+    overflow-y: hidden;
+}
+
+
+/* ── Edit GC form ───────────────────────────────────────────────── */
+.gc-form-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    flex-wrap: wrap;
+}
+
+.gc-name-input {
+    flex: 1;
+    min-width: 150px;
+    padding: 7px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.gc-name-input:focus {
+    outline: none;
+    border-color: #1D9E75;
+    box-shadow: 0 0 0 2px rgba(29,158,117,0.15);
+}
+
+.gc-viewonly-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    color: #555;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.gc-update-btn {
+    padding: 7px 16px !important;
+    background: #2979CC !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 6px !important;
+    font-size: 13px !important;
+    cursor: pointer !important;
+    white-space: nowrap;
+    transition: background 0.15s;
+}
+
+.gc-update-btn:hover { background: #1a5fa3 !important; }
+
+/* ── Participant list ────────────────────────────────────────────── */
+.gc-participant-list {
+    max-height: 450px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 4px 0;
+}
+
+.gc-participant-list .div-user {
+    cursor: pointer;
+}
+
+.gc-participant-list .div-user:hover {
+    background: #efefef;
+}
+
+.gc-delete-btn {
+    padding: 7px 16px !important;
+    background: #e53935 !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 6px !important;
+    font-size: 13px !important;
+    cursor: pointer !important;
+    white-space: nowrap;
+    transition: background 0.15s;
+}
+
+.gc-delete-btn:hover { background: #c62828 !important; }
+
+#body-create-gc .gc-viewonly-label {
+    width: 90%;
+    margin: 0 auto 8px auto;
+    padding: 0;
+    display: flex;
+}
+
+#body-create-gc input[name="gc_name"] {
+    /*margin-bottom: 2px !important;*/
+}
+
+.checkbox-zone {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;       /* ← gives a bigger, safer click target */
+    cursor: default;    /* ← signals this zone behaves differently */
+}
 

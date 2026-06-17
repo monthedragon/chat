@@ -1,20 +1,31 @@
 <?php /* user_list.php */ ?>
 
 <?php
-echo "<form id='frm-user-list'>";
-
-if ($user_type == ADMIN_CODE) {
-    echo "<input type='input' class='required' name='gc_name' placeholder='Group chat name...'>";
-    echo "<input type='submit' value='Create Group chat' id='btn-crate-gc' class='button'><br>";
-//    echo '<hr>';
-}
-
-//Search is now available to all
-echo "<input type='input' id='user_chat_search' name='user_chat_search' placeholder='Search name here' autocomplete='off'>";
-echo "</form>";
 
 // ── Users section ─────────────────────────────────────────────────
+echo "<form id='frm-user-list'>";
+if ($user_type == ADMIN_CODE) {
+    echo "<div class='sidebar-section collapsed' id='section-form'>";
+    echo "  <div class='sidebar-section-header' data-target='body-create-gc'>";
+    echo "      <span>Group Chat Form</span>";
+    echo "      <span class='sidebar-toggle'>&#9660;</span>";
+    echo "  </div>";
+    echo "<div class='sidebar-section-body' id='body-create-gc' style='display:none;'>";
+    echo "<input type='input' class='required' name='gc_name' placeholder='Group chat name...'>";
+
+    echo "<label class='gc-viewonly-label'>
+        <input type='checkbox' name='view_only'>
+        View only (Agent)
+      </label>";
+
+    echo "<input type='submit' value='Create Group chat' id='btn-crate-gc' class='button'><br>";
+    echo "</div>"; //end of body-create-gc
+    echo "</div>"; //end of section-form
+}
+
+
 echo "<div class='sidebar-section' id='section-users'>";
+echo "<input type='input' id='user_chat_search' name='user_chat_search' placeholder='Search name here' autocomplete='off'>";
 echo "  <div class='sidebar-section-header' data-target='body-users'>";
 echo "      <span>Users</span>";
 echo "      <span class='sidebar-toggle'>&#9660;</span>";
@@ -43,7 +54,9 @@ foreach ($users as $details) {
         : '';
 
     echo "<div class='div-user {$fullNameCls}' user_id='{$details['user_name']}' data-name='" . strtolower($fullName) . "'>";
-    echo $checkbox;
+    if($checkbox){
+        echo "<span class='checkbox-zone'>{$checkbox}</span>";
+    }
     echo "<span class='user-avatar {$av_class}'>{$initials}</span>";
     echo "<span class='div-user-chat cursor-pointer {$unread_cls}'>{$fullName}</span>";
     echo "</div>";
@@ -83,6 +96,9 @@ if (isset($gc_list) && $gc_list) {
     echo "  </div>"; // end body-gc
     echo "</div>";   // end section-gc
 }
+
+echo "</form>";
+
 ?>
 
 <script>
@@ -117,13 +133,14 @@ if (isset($gc_list) && $gc_list) {
 
         // ── Collapsible sections ──────────────────────────────────
 
-        $('.sidebar-section-header').click(function() {
+        $('.sidebar-section-header_').click(function() {
+
             var targetId = $(this).data('target');
             var $body    = $('#' + targetId);
             var $header  = $(this);
             var $section = $header.closest('.sidebar-section'); // ← get parent section
 
-            $body.slideToggle(200, function() {
+            $body.slideToggle(100, function() {
                 if ($body.is(':visible')) {
                     $header.removeClass('collapsed');
                     $section.removeClass('collapsed'); // ← expand section
@@ -132,6 +149,23 @@ if (isset($gc_list) && $gc_list) {
                     $section.addClass('collapsed');    // ← shrink section
                 }
             });
+        });
+
+        $('.sidebar-section-header').click(function() {
+
+            var targetId = $(this).data('target');
+            var $body    = $('#' + targetId);
+            var $header  = $(this);
+            var $section = $header.closest('.sidebar-section');
+
+            $section.toggleClass('collapsed');
+            $header.toggleClass('collapsed');
+
+            if ($section.hasClass('collapsed')) {
+                $body.stop(true, true).hide();
+            } else {
+                $body.stop(true, true).show();
+            }
         });
 
         // ── Existing handlers (unchanged) ─────────────────────────
@@ -163,6 +197,10 @@ if (isset($gc_list) && $gc_list) {
         } else {
             document.title = default_title;
         }
+
+        $('.div-user .checkbox-zone').on('click', function(e) {
+            e.stopPropagation();
+        });
 
         $('.div-user').unbind('click');
         $('.div-user').click(function() {
