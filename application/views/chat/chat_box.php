@@ -13,6 +13,13 @@
     $av_colors = ['av-green','av-purple','av-coral','av-blue','av-amber','av-teal'];
     $av_class  = $av_colors[abs(crc32($target_user_id)) % count($av_colors)];
     echo "<span class='user-avatar {$av_class}' style='width:36px;height:36px;font-size:13px;'>{$initials}</span>";
+
+    $view_only_mark= '';
+    if(isset($gc_info['view_only']) && $gc_info['view_only']){
+
+        $view_only_mark = "&nbsp;|&nbsp; view only";
+        $view_only_mark .= ($user_type == ADMIN_CODE) ? ' (agent)' : '';
+    }
     ?>
     <div style='flex:1;'>
         <h2 style='font-size:15px;font-weight:500;color:#222;margin:0;border:none;padding:0;'>
@@ -20,6 +27,7 @@
         </h2>
         <span style='font-size:12px;color:#888;'>
             <?php echo ($chat_type == 'GROUP') ? 'Group chat' : 'Direct message'; ?>
+            <?=$view_only_mark?>
         </span>
     </div>
     <?php

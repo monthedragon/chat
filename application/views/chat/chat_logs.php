@@ -20,12 +20,13 @@ if (!isset($reactions)) $reactions = array();
 
 <table id='tbl-chat' width='100%'>
     <tr>
-        <td style='width:10%'></td>
-        <td style='width:77%'></td>
+        <td style='width:13%'></td>
+        <td style='width:74%'></td>
         <td style='width:13%'></td>
     </tr>
     <?php
     $old_msg_user = '';
+    $old_msg_time = ''; // ← tracks previous message's unix timestamp
 
     function av_class($username) {
         $colors = ['av-green','av-purple','av-coral','av-blue','av-amber','av-teal'];
@@ -49,19 +50,32 @@ if (!isset($reactions)) $reactions = array();
         $is_owner = ($current_user == $details['created_by']);
         $log_id   = $details['chat_log_id'];
 
-        // ── avatar ────────────────────────────────────────────────────
+        // -- check if within 1 minute of previous SHOWN timestamp -----
+        // (anchor-based: only updates old_msg_time when NOT grouped,
+        //  so a rapid-fire burst keeps comparing against the last
+        //  SHOWN timestamp instead of resetting on every message)
+        $current_time = strtotime($details['date_entered']);
+        $within_1min  = false;
+
+        if (!$user_changed && $old_msg_time !== '') {
+            $diff_seconds = $current_time - $old_msg_time;
+            if ($diff_seconds < 60) {
+                $within_1min = true;
+            } else {
+                $old_msg_time = $current_time; // update anchor
+            }
+        } else {
+            $old_msg_time = $current_time; // update anchor
+        }
+
+        // -- avatar ----------------------------------------------------
         $av_color    = av_class($details['created_by']);
         $av_initials = av_initials($details['firstname'], $details['lastname']);
         $avatar_html = $user_changed
             ? "<span class='user-avatar {$av_color}'>{$av_initials}</span>"
             : "<span class='avatar-spacer'></span>";
 
-        // ── sender name ───────────────────────────────────────────────
-        $sender_name = ($user_changed && $chat_by)
-            ? "<div class='msg-sender-name'>{$chat_by}</div>"
-            : '';
-
-        // ── status trigger link ───────────────────────────────────────
+        // -- status trigger link ---------------------------------------
         $chat_triger_status = '';
         if (!$do_export) {
             if ((isset($privs[199]) || $user_type == ADMIN_CODE) && !$is_owner) {
@@ -70,14 +84,14 @@ if (!isset($reactions)) $reactions = array();
             }
         }
 
-        // ── completed badge ───────────────────────────────────────────
+        // -- completed badge -------------------------------------------
         $chat_log_status = '';
         if ($details['chat_status'] == 'completed') {
             $status_color    = $is_owner ? 'yellow' : 'red';
             $chat_log_status = "<div class='chat_log_completed status_{$status_color}'>{$details['chat_status']}</div>";
         }
 
-        // ── message content ───────────────────────────────────────────
+        // -- message content -------------------------------------------
         if ($details['is_file']) {
             $file_name   = $details['file_name'];
             $source_link = base_url() . "uploads/chat_attachment/" . $file_name;
@@ -97,10 +111,32 @@ if (!isset($reactions)) $reactions = array();
             $chat_message = $chat_log_status . nl2br($details['message']);
         }
 
-        // ── meta line (below bubble) ──────────────────────────────────
-        $meta = $chat_triger_status . $details['date_entered'];
+        // -- meta line (below bubble) — hidden when within 1 min of same  -
+        // -- sender's previous message, UNLESS there's a status trigger    -
+        // -- link (admin action must remain visible/clickable)             -
+        $show_meta = (!$within_1min || $chat_triger_status);
+        $meta      = $chat_triger_status . $details['date_entered'];
 
-        // ── reaction data for this message ──────────────────────────
+        // -- inline sender name + timestamp header ---------------------
+        // Shown only when sender changes (name) OR meta should show (time)
+        $header_parts = array();
+        if ($user_changed && $chat_by) $header_parts[] = "<span class='msg-header-name'>{$chat_by}</span>";
+        if ($show_meta)                $header_parts[] = "<span class='msg-header-time'>{$meta}</span>";
+
+        $msg_header = '';
+        if (!empty($header_parts)) {
+            $msg_header = "<div class='msg-header'>" . implode('', $header_parts) . "</div>";
+        }
+
+        // -- hover-reveal timestamp tooltip -----------------------------
+        // Only needed when the header is hidden (grouped message) —
+        // gives the Messenger-style "hover bubble to peek timestamp" effect
+        $hover_timestamp = '';
+        if (!$show_meta) {
+            $hover_timestamp = "<div class='msg-hover-timestamp'>{$details['date_entered']}</div>";
+        }
+
+        // -- reaction data for this message --------------------------
         $r_count  = isset($reactions[$log_id]) ? $reactions[$log_id]['count'] : 0;
         $r_names  = isset($reactions[$log_id]) ? $reactions[$log_id]['names'] : array();
         $r_mine   = isset($reactions[$log_id]) ? $reactions[$log_id]['reacted_by_me'] : false;
@@ -124,25 +160,28 @@ if (!isset($reactions)) $reactions = array();
             $reaction_badge .= "</div>";
         }
 
-        // ── row ───────────────────────────────────────────────────────
-        // Key: wrap sender name + bubble + meta in a .msg-wrap div
-        // For own: .msg-wrap has text-align:right so bubble+meta align right
-        // For other: .msg-wrap has text-align:left
+        // -- row -------------------------------------------------------
+        // Key: wrap header (name+time) + bubble in a .msg-wrap div
+        // For own: .msg-wrap has align-items:flex-end so bubble aligns right
+        // For other: .msg-wrap has align-items:flex-start
+
+        // Grouped messages (within 1 min, same sender) get tighter spacing
+        $row_padding_top = $within_1min ? '0px' : '10px';
 
         $log_html = "<tr chat_logid='{$log_id}'>";
 
         if ($is_owner) {
 
             $log_html .= "<td></td>";
-            $log_html .= "<td valign='top' style='padding-bottom:14px;'>";
+            $log_html .= "<td valign='top' style='padding-top:{$row_padding_top};'>";
             $log_html .= "<div class='msg-wrap msg-wrap-own'>";
-            $log_html .=   "{$sender_name}";
+            $log_html .=   "{$msg_header}";
             $log_html .=   "<div class='bubble-container'>";
+            $log_html .=     "{$hover_timestamp}";
             $log_html .=     "<div class='own_msg'>{$chat_message}</div>";
             $log_html .=     "{$reaction_trigger}";
             $log_html .=     "{$reaction_badge}";
             $log_html .=   "</div>";
-            $log_html .=   "<div class='own_msg_datetime'>{$meta}</div>";
             $log_html .= "</div>";
             $log_html .= "</td>";
             $log_html .= "<td valign='top' style='padding-top:4px;padding-left:6px;'>{$avatar_html}</td>";
@@ -150,15 +189,15 @@ if (!isset($reactions)) $reactions = array();
         } else {
 
             $log_html .= "<td valign='top' style='padding-top:4px;text-align:right;padding-right:6px;'>{$avatar_html}</td>";
-            $log_html .= "<td valign='top' style='padding-bottom:14px;'>";
+            $log_html .= "<td valign='top' style='padding-top:{$row_padding_top};'>";
             $log_html .= "<div class='msg-wrap msg-wrap-other'>";
-            $log_html .=   "{$sender_name}";
+            $log_html .=   "{$msg_header}";
             $log_html .=   "<div class='bubble-container'>";
             $log_html .=     "<div class='other_msg'>{$chat_message}</div>";
+            $log_html .=     "{$hover_timestamp}";
             $log_html .=     "{$reaction_trigger}";
             $log_html .=     "{$reaction_badge}";
             $log_html .=   "</div>";
-            $log_html .=   "<div class='other_msg_datetime'>{$meta}</div>";
             $log_html .= "</div>";
             $log_html .= "</td>";
             $log_html .= "<td></td>";
@@ -196,7 +235,7 @@ if (!isset($reactions)) $reactions = array();
 
         })
 
-        // ── reaction toggle ────────────────────────────────────────
+        // -- reaction toggle ----------------------------------------
         $(document).off('click', '.msg-reaction-trigger, .msg-reaction-badge').on('click', '.msg-reaction-trigger, .msg-reaction-badge', function(e){
             e.stopPropagation();
             var chat_log_id = $(this).attr('chat_log_id');
@@ -208,7 +247,6 @@ if (!isset($reactions)) $reactions = array();
                     $.ajax({
                         url: url_chat_thread,
                         success: function(data){
-                            console.log(data);
                             $('#msg-chat-log').html(data);
                         }
                     });
@@ -216,4 +254,8 @@ if (!isset($reactions)) $reactions = array();
             });
         });
     })
+
+    document.querySelectorAll('.bubble-container').forEach(el => {
+        console.log(el.closest('tr').getAttribute('chat_logid'), '-> height:', el.offsetHeight, 'parent td height:', el.closest('td').offsetHeight);
+    });
 </script>

@@ -1,8 +1,12 @@
-/* ── chat.css ───────────────────────────────────────────────────── */
+/* -- chat.css ----------------------------------------------------- */
 
 *, *::before, *::after { box-sizing: border-box; }
 
-/* ── Main layout ────────────────────────────────────────────────── */
+* {
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* -- Main layout -------------------------------------------------- */
 #chat-list {
     min-height: 500px;
     width: 22% !important;
@@ -26,7 +30,7 @@
     min-height: 0;
 }
 
-/* ── Sidebar inputs ─────────────────────────────────────────────── */
+/* -- Sidebar inputs ----------------------------------------------- */
 
 #frm-user-list input[type=input],
 #frm-user-list input[type=text] {
@@ -61,7 +65,7 @@
     padding: 4px 0;
 }
 
-/* ── User rows ──────────────────────────────────────────────────── */
+/* -- User rows ---------------------------------------------------- */
 .div-user {
     display: flex;
     align-items: center;
@@ -103,7 +107,7 @@
     vertical-align: middle;
 }
 
-/* ── Group chat sidebar ─────────────────────────────────────────── */
+/* -- Group chat sidebar ------------------------------------------- */
 #frm-user-list hr, #chat-list hr {
     border: none;
     border-top: 1px solid #e5e5e5;
@@ -150,7 +154,7 @@
 
 .gc-icon { font-size: 14px; margin-right: 4px; }
 
-/* ── Chat box ───────────────────────────────────────────────────── */
+/* -- Chat box ----------------------------------------------------- */
 #div-chat-log {
     height: 100% !important;
     display: flex !important;
@@ -180,7 +184,7 @@
     cursor: pointer !important;
 }
 
-/* ── Message log ────────────────────────────────────────────────── */
+/* -- Message log -------------------------------------------------- */
 #msg-chat-log {
     flex: 1;
     display: block;
@@ -189,7 +193,7 @@
     padding: 8px 4px;
 }
 
-/* ── Table layout ───────────────────────────────────────────────── */
+/* -- Table layout ------------------------------------------------- */
 #tbl-chat {
     width: 100%;
     border-collapse: collapse;
@@ -214,7 +218,7 @@
 
 .bubble-cell-own { text-align: right; }
 
-/* ── Avatars ────────────────────────────────────────────────────── */
+/* -- Avatars ------------------------------------------------------ */
 .user-avatar {
     display: inline-flex;
     align-items: center;
@@ -241,20 +245,61 @@
 .av-amber  { background: #FAEEDA; color: #854F0B; }
 .av-teal   { background: #d0f0e8; color: #085041; }
 
-/* ── Sender name ────────────────────────────────────────────────── */
-.msg-sender-name {
+/* -- Sender name + timestamp, inline -------------------------------- */
+.msg-header {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
     font-size: 11px;
     color: #999;
     margin-bottom: 3px;
     padding: 0 2px;
-    text-align: left;
 }
 
-.msg-sender-own {
-    text-align: right;
+.msg-wrap-own .msg-header {
+    flex-direction: row-reverse;
 }
 
-/* ── Chat bubbles ───────────────────────────────────────────────── */
+.msg-header-name {
+    font-weight: 500;
+    color: #777;
+}
+
+.msg-header-time {
+    white-space: nowrap;
+    color: #aaa;
+}
+
+/* -- Hover-reveal timestamp for grouped messages --------------------- */
+.msg-hover-timestamp {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    font-size: 10px;
+    color: #aaa;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s;
+}
+
+/* other messages — tooltip sits to the RIGHT of the bubble */
+.msg-wrap-other .msg-hover-timestamp {
+    left: 100%;
+    margin-left: 8px;
+}
+
+/* own messages — tooltip sits to the LEFT of the bubble */
+.msg-wrap-own .msg-hover-timestamp {
+    right: 100%;
+    margin-right: 8px;
+}
+
+.bubble-container:hover .msg-hover-timestamp {
+    opacity: 1;
+}
+
+/* -- Chat bubbles ------------------------------------------------- */
 .own_msg,
 .other_msg {
     position: relative;
@@ -280,26 +325,7 @@
     text-align: left;
 }
 
-/* ── Datetime — BELOW bubble ────────────────────────────────────── */
-.own_msg_datetime,
-.other_msg_datetime {
-    position: static !important;
-    float: none !important;
-    display: block !important;
-    font-size: 11px;
-    color: #aaa;
-    margin-top: 3px;
-    padding: 0 2px;
-    white-space: nowrap;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.own_msg_datetime  { text-align: right; }
-.other_msg_datetime { text-align: left; }
-
-/* ── Status trigger link ────────────────────────────────────────── */
+/* -- Status trigger link ------------------------------------------ */
 .spn_chat_status {
     font-size: 11px;
     color: #888;
@@ -309,7 +335,7 @@
 
 .spn_chat_status:hover { color: #333; }
 
-/* ── Completed badge (inside bubble, above message text) ────────── */
+/* -- Completed badge (inside bubble, above message text) ---------- */
 .chat_log_completed {
     display: block;
     font-size: 10px;
@@ -325,7 +351,7 @@
 .status_yellow { background: #fff8e1; color: #b45309; }
 .status_red    { background: #fef2f2; color: #991b1b; }
 
-/* ── Compose area ───────────────────────────────────────────────── */
+/* -- Compose area ------------------------------------------------- */
 #frm-chat {
     display: flex;
     flex-direction: column;
@@ -370,11 +396,11 @@
 .send-btn:hover,
 #frm-chat input[type=submit]:hover { background: #178a65 !important; }
 
-/* ── Utility ────────────────────────────────────────────────────── */
+/* -- Utility ------------------------------------------------------ */
 .cursor-pointer { cursor: pointer; }
 #tbl-chat img { border-radius: 4px; }
 
-/* ── Message wrapper — controls bubble + meta alignment ─────────── */
+/* -- Message wrapper — controls bubble + meta alignment ----------- */
 .msg-wrap {
     display: flex;
     flex-direction: column;
@@ -389,7 +415,7 @@
     align-items: flex-start;
 }
 
-/* ── Sidebar scroll containers ──────────────────────────────────── */
+/* -- Sidebar scroll containers ------------------------------------ */
 .sidebar-section {
     display: flex;
     flex-direction: column;
@@ -405,7 +431,7 @@
     min-height: 0;
 }
 
-/* ── Collapsible section headers ────────────────────────────────── */
+/* -- Collapsible section headers ---------------------------------- */
 .sidebar-section-header {
     display: flex;
     align-items: center;
@@ -504,7 +530,7 @@
     overflow-y: hidden;
 }
 
-/* ── Edit GC form ───────────────────────────────────────────────── */
+/* -- Edit GC form ------------------------------------------------- */
 .gc-form-header {
     display: flex;
     align-items: center;
@@ -552,7 +578,7 @@
 
 .gc-update-btn:hover { background: #1a5fa3 !important; }
 
-/* ── Participant list ────────────────────────────────────────────── */
+/* -- Participant list ---------------------------------------------- */
 .gc-participant-list {
     max-height: 450px;
     overflow-y: auto;
@@ -627,13 +653,14 @@
     background: #f0f0f0;
 }
 
-/* ── Reactions ──────────────────────────────────────────────────── */
+/* -- Reactions ---------------------------------------------------- */
 .bubble-container {
     position: relative;
     display: inline-block;
     max-width: 70%;
     vertical-align: bottom;
     /*width:60%;*/
+    margin-bottom: 10px;
 }
 
 .bubble-container .own_msg,
