@@ -66,78 +66,34 @@ function do_ajax(url,type,data,objID,no_return){
 	if(no_return==undefined)
 		no_return=0;
 
-//    alert(url +  ' ' + objID);
+    //url = 'main/menu';
+    var request = $.ajax({
+        url:  url,
+        data: data,
+        type: type,
+        success: function(data) {
 
-//
-//    var find = '/';
-//    var re = new RegExp(find, 'g');
-//    var replacedUrl  = '';
-//    replacedUrl = url.replace(re, '');
-//
-//
-//    var match = replacedUrl.match(/lessonsview|time_slot_expiry|get_contact_schedules|save_student_eval|testi_form|update_show_public|studentview_list|teacher_lesson_list|view_list|delete|teacher_incentives_list|usersindex/);
-//
-//    if (match == '' || match == null){
-//
-//        if(type == 'SERIALIZED')
-//            data = data;
-//        else if(data != 'undefined')
-//            data = $.param(data);
-//        else
-//            data = '';
-//
-//
-//        window.location = url+'?'+data;
-//    }
-
-
-	if(BrowserDetect.browser == 'Explorer'){
-		// Use Microsoft XDR
-		var xdr = new XDomainRequest();
-		xdr.open("get", url);
-		xdr.onload = function() {
-			// XDomainRequest doesn't provide responseXml, so if you need it:
-			var dom = new ActiveXObject("Microsoft.XMLDOM");
-			dom.async = false;
-			dom.loadXML(xdr.responseText);
-				if(no_return==99){ //for debugging purposes!
-					alert(data);
-				}else if(no_return==1){
-					//do nothing!!
-				}else if(no_return==0){
-					$('#'+objID).html(xdr.responseText);
-				}else{
-					alert(no_return);
-				}
-		};
-		xdr.send();
-		
-	}else{
-		//url = 'main/menu';
-		var request = $.ajax({
-			url:url,
-			data:data,
-			type:type,
-			 crossDomain: true,
-			//dataType: "jsonp",
-			//cache: false,
-			success:function(data){
-				if(no_return==99){ //for debugging purposes!
+            try {
+                const json = JSON.parse(data);
+                if (json.session_expired) {
+                    window.location.replace(BASE_URL );
+                    return;
+                }
+            } catch(e) {
+                if (no_return == 99) { //for debugging purposes!
                     console.log(data);
-					alert(data);
-				}else if(no_return==1){
-					//do nothing!!
-				}else if(no_return==0){
-					$('#'+objID).html(data);
-				}else{
-					alert(no_return);
-				}
-				
-				
-			} 
-		});	
-		
-	}	
+                    alert(data);
+                } else if (no_return == 1) {
+                    //do nothing!!
+                } else if (no_return == 0) {
+                    alert(12345);
+                    $('#' + objID).html(data);
+                } else {
+                    alert(no_return);
+                }
+            }
+        }
+    });
 	
 } 
 
@@ -180,7 +136,7 @@ function do_ajax_with_return(url,return_url,type,data,objID,no_return,objWait){
 		xdr.send();
 		
 	}else{
-	
+
 		$.ajax({
 			url:url,
 			data:data,
@@ -210,7 +166,7 @@ function do_ajax_with_return(url,return_url,type,data,objID,no_return,objWait){
 						do_ajax(return_url,type,data,objID);
 					}
 				}
-			} 
+			}
 		});
 		
 	}

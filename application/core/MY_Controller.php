@@ -5,9 +5,14 @@ class Auth_Controller extends CI_Controller {
     { 
         parent::__construct();
 		$this->load->helper('url');
-		$this->load->library('session');   
-        if ( ! $this->session->userdata('logged_in'))
-        { 
+		$this->load->library('session');
+
+        if (!$this->session->userdata('logged_in')) {
+            if ($this->input->is_ajax_request()) {
+                // Return a signal to JS instead of redirecting server-side
+                echo json_encode(array('session_expired' => true));
+                exit;
+            }
             redirect('security/login');
         }
     }

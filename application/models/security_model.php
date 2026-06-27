@@ -4,40 +4,49 @@ class Security_model extends CI_Model {
 	{
 		$this->load->database(); 		
 	}
-	
-	function login(){
 
-		$pdata = $this->input->post();
-		
-		$query = $this->db->select('*')
-				->from('users')
-				->where('user_name',$pdata['user_name'])
-				->where("user_password","md5('{$pdata['user_password']}')",false)
-				->where('is_active',1)
-				->get();
-		
-		
-		if($query->num_rows() > 0){
-			//set user privs
-			$this->set_user_privileges($pdata['user_name']);
-			
-			$newdata = array(
-						'username'  => $pdata['user_name'], 
-						'logged_in' => TRUE
-					);
-			$this->session->set_userdata($newdata);
-			
-			$result = $query->result_array();
-			
-			$this->session->set_userdata(array('full_name'=>$result[0]['firstname'] . ' ' . $result[0]['lastname'],
-												'user_mobile'=>$result[0]['mobile_no'],
-                                                'user_type'=>$result[0]['user_type']
-                                        ));
-			
-			return 1;
-		}else
-			return 0;
-	}
+    function login() {
+
+        $pdata = $this->input->post();
+        $username = $pdata['user_name'];
+
+        $sql = "SELECT * FROM users
+        WHERE user_name = ?
+        AND user_password = md5(?)
+        AND is_active = 1";
+
+        $query = $this->db->query($sql, array(
+            $username,
+            $pdata['user_password']
+        ));
+
+        if ($query->num_rows() > 0) {
+
+            $result = $query->result_array();
+            $user   = $result[0];
+
+            $this->flushOldSession($username);
+
+            // Set user privileges (your existing method)
+            $this->set_user_privileges($username);
+
+            // Set session data
+            $this->session->set_userdata(array(
+                'username'     => $username,
+                'logged_in'    => TRUE,
+                'full_name'    => $user['firstname'] . ' ' . $user['lastname'],
+                'user_type'    => $user['user_type'],
+            ));
+
+            return 1;
+
+        } else {
+            return 0;
+        }
+    }
+
+    public function flushOldSession($username){
+        $this->db->like('user_data', '"username";s:' . strlen($username) . ':"' . $username . '"')->delete('ci_sessions');    }
 	
 	function set_user_privileges($username)
 	{

@@ -1,3 +1,7 @@
+<script>
+    const BASE_URL = "<?= base_url(); ?>";
+</script>
+
 <link rel="stylesheet" href="<?= base_url() ?>assets/css/chat.css">
 <span style='display:none' id='interval_holder'>s</span>
 <div id='chat-list'>

@@ -254,8 +254,4 @@ if (!isset($reactions)) $reactions = array();
             });
         });
     })
-
-    document.querySelectorAll('.bubble-container').forEach(el => {
-        console.log(el.closest('tr').getAttribute('chat_logid'), '-> height:', el.offsetHeight, 'parent td height:', el.closest('td').offsetHeight);
-    });
 </script>
