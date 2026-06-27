@@ -7,7 +7,7 @@
 <div id='chat-list'>
     <div id='user-list' style='height:100%;display:block'></div>
 </div>
-<div style='height:600px;width:74%;float:left;padding-left:12px;'>
+<div id="chat-panel">
     <div id='div-chat-log' style='height:100%;display:flex;flex-direction:column;'></div>
     <div id='prev-user-list-len' style='display:none'></div>
 </div>

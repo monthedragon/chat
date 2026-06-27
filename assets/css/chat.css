@@ -357,7 +357,7 @@
     flex-direction: column;
     gap: 8px;
     padding: 8px 4px 4px;
-    border-top: 1px solid #e8e8e8;
+    /*border-top: 1px solid #e8e8e8;*/
     margin-top: 8px;
 }
 
@@ -768,4 +768,11 @@
 
 .reaction-name-row:hover {
     background: #f5f5f5;
+}
+
+#chat-panel {
+    height: 86vh;
+    width: 74%;
+    float: left;
+    padding-left: 12px;
 }
