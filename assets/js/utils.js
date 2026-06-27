@@ -86,7 +86,6 @@ function do_ajax(url,type,data,objID,no_return){
                 } else if (no_return == 1) {
                     //do nothing!!
                 } else if (no_return == 0) {
-                    alert(12345);
                     $('#' + objID).html(data);
                 } else {
                     alert(no_return);
