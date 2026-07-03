@@ -580,7 +580,7 @@
 
 /* -- Participant list ---------------------------------------------- */
 .gc-participant-list {
-    max-height: 450px;
+    max-height: 75vh;
     overflow-y: auto;
     overflow-x: hidden;
     padding: 4px 0;
