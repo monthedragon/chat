@@ -56,12 +56,15 @@ define('MAIN_DB','chat');
 define('ADMIN_CODE','admin');
 define('SUPPORT_CODE','support');
 define('AGENT_CODE','agent');
+define('QA_CODE','qa');
  
  //CHAT CONFIG
  define('CHAT_REFRESH_TIME',10000); //in seconds (1000 = 1 sec)
  define('CHAT_REFRESH_UNREAD_TIME',1000); //in seconds (1000 = 1 sec)
  define('CHAT_LOG_PER_ROW',50); //number of CHAT LOG to be displayed
- 
+
+//This is for the API Chat
+define('API_CHAT_SECRET_KEY', 'WillReplaceInProd');
  
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */
