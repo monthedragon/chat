@@ -4,7 +4,8 @@ Class Api extends CI_Controller  {
 	//use `Auth_Controller` if you want the page to be validated if the user is logged in or not, if you want to disable this then use `CI_Controller` instead
 	public  function __construct(){
 		parent::__construct();
-		$this->load->model('chat_model');
+        $this->load->model('chat_model');
+        $this->load->model('users_model');
 		$this->load->helper('url');
 		$this->load->library('session');  
 		$this->load->helper(array('form', 'url'));  
@@ -50,13 +51,24 @@ Class Api extends CI_Controller  {
 
         // 4. Check recipient
         // If recipient does not exist:
-        //
-        // return $this->output
-        //     ->set_status_header(404)
-        //     ->set_output(json_encode(array(
-        //         'ok' => false,
-        //         'error' => 'User not found'
-        //     )));
+        $userErr = array();
+
+        if (!$this->isChatUserExists($recipient)) {
+            $userErr[] = $recipient;
+        }
+
+        if (!$this->isChatUserExists($sender)) {
+            $userErr[] = $sender;
+        }
+
+        if (!empty($userErr)) {
+            return $this->output
+                ->set_status_header(404)
+                ->set_output(json_encode([
+                    'ok' => false,
+                    'error' => 'User not found: ' . implode(', ', $userErr)
+                ]));
+        }
 
         // 5. Find or create a SOLO chat
         $this->chat_model->participants[] = $recipient;
@@ -74,6 +86,12 @@ Class Api extends CI_Controller  {
                 'ok' => true,
                 'chat_id' => $chat_id
             )));
+    }
+
+    private function isChatUserExists($username)
+    {
+        $userInfo = $this->users_model->get_user_by_id($username);
+        return !empty($userInfo);
     }
 
 }
